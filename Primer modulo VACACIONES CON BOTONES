@@ -1,0 +1,112 @@
+import tkinter as tk
+from tkinter import messagebox
+
+vacaciones_disponibles = [
+    "1 al 15 de enero", "16 al 31 de enero",
+    "1 al 15 de febrero", "16 al 29 de febrero",
+    "1 al 15 de marzo",
+    "1 al 15 de abril", "16 al 30 de abril",
+    "1 al 15 de mayo",
+    "1 al 15 de junio", "16 al 30 de junio",
+    "1 al 15 de julio", "16 al 31 de julio",
+    "1 al 15 de agosto",
+    "1 al 15 de septiembre", "16 al 30 de septiembre",
+    "1 al 15 de octubre", "16 al 31 de octubre",
+    "1 al 15 de noviembre", "16 al 30 de noviembre",
+    "1 al 15 de diciembre", "16 al 31 de diciembre"
+]
+
+historial = []
+
+def asignar_vacaciones():
+    nombre = entry_nombre.get().strip()
+    seleccion = variable_vacaciones.get()
+
+    if not nombre:
+        messagebox.showwarning("Campo vacío", "Por favor ingresa el nombre.")
+        return
+
+    if seleccion == "":
+        messagebox.showwarning("Sin selección", "Por favor selecciona un periodo de vacaciones.")
+        return
+
+    historial.append(f"{nombre} eligió vacaciones del {seleccion}")
+    vacaciones_disponibles.remove(seleccion)
+    actualizar_opciones()
+
+    mensaje.set(f"{nombre} ha seleccionado: {seleccion}")
+    entry_nombre.delete(0, tk.END)
+    variable_vacaciones.set("")
+    actualizar_historial()
+
+def actualizar_opciones():
+    for widget in frame_opciones.winfo_children():
+        widget.destroy()
+    
+    columnas = 4
+    for i, opcion in enumerate(vacaciones_disponibles):
+        rb = tk.Radiobutton(
+            frame_opciones, text=opcion,
+            variable=variable_vacaciones, value=opcion,
+            bg="#fdf0f6", fg="#4b2e5c", font=("Arial", 11),
+            anchor="w", justify="left", highlightthickness=0,
+            selectcolor="#ffe4f2", activebackground="#fbe8f6"
+        )
+        rb.grid(row=i // columnas, column=i % columnas, sticky="w", padx=10, pady=2)
+
+def actualizar_historial():
+    text_historial.config(state=tk.NORMAL)
+    text_historial.delete("1.0", tk.END)
+    for registro in historial:
+        text_historial.insert(tk.END, registro + "\n")
+    text_historial.config(state=tk.DISABLED)
+
+
+ventana = tk.Tk()
+ventana.title("Control de Vacaciones - Hospital")
+ventana.geometry("1000x750")  
+ventana.configure(bg="#fdf0f6")
+
+
+label_style = {"bg": "#fdf0f6", "fg": "#4b2e5c", "font": ("Arial", 12)}
+entry_style = {"bg": "#ffffff", "fg": "#000", "font": ("Arial", 12)}
+button_style = {"bg": "#d4a5ff", "fg": "#ffffff", "font": ("Arial", 12, "bold")}
+
+
+tk.Label(ventana, text="Nombre del empleado:", **label_style).pack(pady=5)
+entry_nombre = tk.Entry(ventana, width=40, **entry_style)
+entry_nombre.pack(pady=5)
+
+tk.Label(ventana, text="Selecciona un periodo de vacaciones:", **label_style).pack(pady=10)
+
+variable_vacaciones = tk.StringVar(value="")
+frame_opciones = tk.Frame(ventana, bg="#fdf0f6")
+frame_opciones.pack(pady=5)
+
+actualizar_opciones()
+
+tk.Button(ventana, text="Enviar", command=asignar_vacaciones, **button_style).pack(pady=10)
+
+mensaje = tk.StringVar()
+tk.Label(ventana, textvariable=mensaje, bg="#fdf0f6", fg="#822c82", font=("Arial", 12, "italic")).pack(pady=10)
+
+tk.Label(ventana, text="Historial de vacaciones asignadas:", **label_style).pack(pady=5)
+
+
+frame_historial = tk.Frame(ventana, bg="#fdf0f6")
+frame_historial.pack(pady=5)
+
+scrollbar = tk.Scrollbar(frame_historial)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+text_historial = tk.Text(
+    frame_historial, height=20, width=90,
+    yscrollcommand=scrollbar.set,
+    bg="#ffffff", fg="#000", font=("Arial", 15)
+)
+text_historial.pack(side=tk.LEFT, fill=tk.BOTH)
+
+scrollbar.config(command=text_historial.yview)
+text_historial.config(state=tk.DISABLED)
+
+ventana.mainloop()
