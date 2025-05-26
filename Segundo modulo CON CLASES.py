@@ -3,10 +3,12 @@ from tkinter import messagebox
 
 
 class Empleado:
-    def __init__(self, nombre, id_empleado, puesto, turno="Sin asignar", jornada="Sin asignar"):
+    def __init__(self, nombre, id_empleado, puesto, edad, nss, turno="Sin asignar", jornada="Sin asignar"):
         self.nombre = nombre
         self.id_empleado = id_empleado
         self.puesto = puesto
+        self.edad = edad
+        self.nss = nss
         self.turno = turno
         self.jornada = jornada
         self.vacaciones = []
@@ -40,6 +42,7 @@ class ControlAsistenciaApp:
         
         self.crear_boton_menu("Registrar Empleado", self.mostrar_registro)
         self.crear_boton_menu("Vacaciones", self.mostrar_vacaciones)
+        self.crear_boton_menu("Lista de Empleados", self.mostrar_lista_empleados)
 
         self.seccion_actual = None
         self.mostrar_registro()
@@ -100,13 +103,26 @@ class ControlAsistenciaApp:
         menu_puestos.config(font=("Arial", 12))
         menu_puestos.pack(pady=5)
 
+        tk.Label(self.seccion_actual, text="Edad:", bg=self.bg_color, font=("Arial", 12)).pack()
+        entrada_edad = tk.Entry(self.seccion_actual, font=("Arial", 12))
+        entrada_edad.pack(pady=5)
+
+        tk.Label(self.seccion_actual, text="Núm. de Seguridad Social:", bg=self.bg_color, font=("Arial", 12)).pack()
+        entrada_nss = tk.Entry(self.seccion_actual, font=("Arial", 12))
+        entrada_nss.pack(pady=5)
+
         def guardar():
             nombre = entrada_nombre.get()
             id_empleado = entrada_id.get()
             puesto = puesto_var.get()
-            if nombre and id_empleado and puesto:
-                self.empleados.append(Empleado(nombre, id_empleado, puesto))
+            edad = entrada_edad.get()
+            nss = entrada_nss.get()
+            if nombre and id_empleado and puesto and edad and nss:
+                self.empleados.append(Empleado(nombre, id_empleado, puesto, edad, nss))
                 messagebox.showinfo("Éxito", f"Empleado {nombre} registrado correctamente.")
+                print("Empleado registrado:", nombre)
+                print("Total empleados:", len(self.empleados))
+
                 self.mostrar_registro()
             else:
                 messagebox.showwarning("Error", "Por favor completa todos los campos.")
@@ -146,6 +162,8 @@ class ControlAsistenciaApp:
         historial_texto = tk.Text(self.seccion_actual, height=10, width=60, font=("Arial", 11))
         historial_texto.pack(pady=10)
 
+       
+
         def asignar_vacacion():
             nombre = seleccionado.get()
             periodo = periodo_var.get()
@@ -177,6 +195,28 @@ class ControlAsistenciaApp:
 
         mostrar_historial()
 
+    def mostrar_lista_empleados(self):
+        self.limpiar_seccion_actual()
+        self.seccion_actual = tk.Frame(self.content_frame, bg=self.bg_color)
+        self.seccion_actual.pack(fill="both", expand=True)
+
+        tk.Label(self.seccion_actual, text="Lista de Empleados Registrados", font=("Arial", 16, "bold"), bg=self.bg_color).pack(pady=20)
+
+        if not self.empleados:
+            tk.Label(self.seccion_actual, text="No hay empleados registrados.", font=("Arial", 12), bg=self.bg_color).pack()
+            return
+
+        encabezados = ["Nombre", "ID", "Puesto", "Edad", "NSS"]
+        for i, encabezado in enumerate(encabezados):
+            tk.Label(self.seccion_actual, text=encabezado, font=("Arial", 12, "bold"),
+                     bg=self.menu_color, fg="white", width=20, borderwidth=1, relief="solid").grid(row=1, column=i, padx=1, pady=2)
+
+        for fila, emp in enumerate(self.empleados, start=2):
+            tk.Label(self.seccion_actual, text=emp.nombre, bg="white", width=20, font=("Arial", 11), borderwidth=1, relief="solid").grid(row=fila, column=0)
+            tk.Label(self.seccion_actual, text=emp.id_empleado, bg="white", width=20, font=("Arial", 11), borderwidth=1, relief="solid").grid(row=fila, column=1)
+            tk.Label(self.seccion_actual, text=emp.puesto, bg="white", width=20, font=("Arial", 11), borderwidth=1, relief="solid").grid(row=fila, column=2)
+            tk.Label(self.seccion_actual, text=emp.edad, bg="white", width=20, font=("Arial", 11), borderwidth=1, relief="solid").grid(row=fila, column=3)
+            tk.Label(self.seccion_actual, text=emp.nss, bg="white", width=20, font=("Arial", 11), borderwidth=1, relief="solid").grid(row=fila, column=4)
 
 
 if __name__ == "__main__":
