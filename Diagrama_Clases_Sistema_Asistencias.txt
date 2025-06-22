@@ -1,0 +1,57 @@
+                                                HospitalApp
+                               ────────────────────────────────────────────────────
+                                           + frames: dict
+                                           + main_frame: Frame
+                                           + clock_label: Label
+                               ────────────────────────────────────────────────────
+                                           + create_layout()
+                                           + update_clock()
+                                           + show_frame(name: str)
+                                                      │
+       ├──────────────────────────────────────────────┬──────────────────────────────────────────────┬──────────────────────
+       │                                              │                                              │
+  InicioFrame                                  RegistroFrame                                  VacacionesFrame
+───────────────────────            ──────────────────────────────────────────         ─────────────────────────────────────
+- bg: color fondo                  + entries: dict[str, Entry]                         + id_entry: Entry
+(Solo texto fijo)                  + comboboxes: dict                                  + bloques_vacaciones: list
+                                  + tree: ttk.Treeview                                ─────────────────────────────────────
+                                  ──────────────────────────────────────────          + actualizar_vacaciones()
+                                  + guardar_registro()                                 + asignar()
+
+       │                                              │                                              │
+       └──────────────┬───────────────────────────────┴───────────────────────────────┬──────────────┘
+                      │                                                               │
+               TurnoFrame                                                      AsistenciaFrame
+───────────────────────────────                                   ─────────────────────────────────────────────
++ combo_turno: Combobox                                                      + id_entry: Entry
++ dias_vars: dict                                                 ─────────────────────────────────────────────
++ entry_hora_inicio/fin                                                      + registrar_asistencia()
+───────────────────────────────                                              + _evaluar_retardos()
++ asignar_turno()                                                            + _aplicar_penalizacion()
+
+                      │                                                               │
+                      │                                                               ▼
+              SalidaFrame                                                       PermisosFrame
+───────────────────────────────                                   ─────────────────────────────────────────────
++ combo_id: Combobox                                                         + id_entry: Entry
+                                                                             + tipo_combo: Combobox
++ registrar_salida()                                                         + fecha_inicio / fecha_fin
+                                                                             + entry_extra (motivo/razón)
+                                                                 ─────────────────────────────────────────────
+                                                                             + mostrar_campo_extra()
+                                                                             + registrar_permiso()
+                                                                                      │                     
+                                                                                      ▼
+                                                                             DiasConcedidosFrame
+                                                                      ───────────────────────────────
+                                                                          (Visualiza días festivos
+                                                                             y días concedidos)
+                                                                                     │
+                                                                                     ▼
+                                                                               HistorialFrame
+                                                                     ───────────────────────────────
+                                                                            + combo_id: Combobox
+                                                                            + contenido_frame: Frame
+                                                                     ───────────────────────────────
+                                                                            + mostrar_historial()
+                                                                            + crear_tabla_historial(id)
